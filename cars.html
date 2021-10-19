@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Detection</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+</head>
+
+<body background="BG.png">
+    <a href="index.html"><img src="Back img.png" width="48px" height="48px"></a>
+    <h1>Car Detection</h1>
+    <p id="status">Status: </p>
+    <p>Total Objects: 1 Object</p>
+    <p>COCOssd Detected: 1 Object</p>
+    <br>
+    <br>
+</body>
+
+<script>
+    Status = "";
+    Car_Image = "";
+    Objects = [];
+
+    function preload() {
+        Car_Image = loadImage("cars.jpeg");
+    }
+
+    function setup() {
+        canvas = createCanvas(400, 400);
+        canvas.position(520, 270)
+        InitilizingCOCOssd = ml5.objectDetector('cocossd', modelLoaded);
+        document.getElementById("status").innerHTML = "Status: Dectecting Objects";
+    }
+
+    function modelLoaded() {
+        console.log("COCOssd Successfuly Loaded!");
+        InitilizingCOCOssd.detect(Car_Image, gotResult);
+        Status = true;
+    }
+
+    function draw() {
+        image(Car_Image, 0, 0, 400, 400);
+        if (Status != "") {
+            for (i = 0; i < Objects.length; i++) {
+            document.getElementById("status").innerHTML = "Status: Objects Detected";
+            fill("#0000FF");
+            textSize(20);
+            Percentage = floor(Objects[i].confidence * 100);
+            text(Objects[i].label + " " + Percentage + "%", Objects[i].x + 10, Objects[i].y + 30);
+            noFill();
+            stroke("#FF0000");
+            rect(Objects[i].x, Objects[i].y, Objects[i].width, Objects[i].height);
+            }
+        }
+    }
+
+    function gotResult(error, results) {
+        (error, results)
+        if (error) {
+            console.error;
+        } else {
+            console.log(results);
+            Objects = results;
+        }
+    }
+</script>
+
+<style>
+    body {
+        font-family: 'Staatliches', cursive;
+        background-size: cover;
+    }
+
+    h1 {
+        color: white;
+        text-align: center;
+        font-size: 45px;
+    }
+
+    p {
+        font-size: 30px;
+        color: yellowgreen;
+        text-align: center;
+    }
+
+    canvas {
+        border-radius: 30px;
+        box-shadow: 10px 10px 32px greenyellow;
+    }
+</style>
+
+</html>
